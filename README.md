@@ -17,6 +17,7 @@ Before you begin, ensure you have the following installed on your system:
     spring.datasource.url=jdbc:postgresql://localhost:5432/{database_name}
     spring.datasource.username= {your_username}
     spring.datasource.password= {your_password}
+    spring.datasource.driver-class-name=org.postgresql.Driver
 4. Build the project:
     mvn clean package
 
