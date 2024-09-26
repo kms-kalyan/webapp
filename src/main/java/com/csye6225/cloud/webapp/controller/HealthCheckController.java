@@ -27,6 +27,13 @@ public class HealthCheckController {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @RequestMapping("/healthz?")
+    public ResponseEntity<Void> handleParamRequests() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("Cache-Control", "no-cache")
+                .build();
+    }
+
     @GetMapping("/healthz")
     public ResponseEntity<Void> HealthCheck(@RequestBody(required = false) String body, @RequestParam(required = false) Map<String, String> allParams){
         if ((body != null && !body.isEmpty())|| !allParams.isEmpty()) {
@@ -79,6 +86,8 @@ public class HealthCheckController {
                 .header("Cache-Control", "no-cache")
                 .build();
     }
+
+    
 
 
 }
