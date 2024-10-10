@@ -7,7 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
+import com.csye6225.cloud.webapp.WebAppMain;
+
+@SpringBootTest(classes = WebAppMain.class)
 @AutoConfigureMockMvc
 public class HealthCheckControllerTest {
 
