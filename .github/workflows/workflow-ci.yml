@@ -1,13 +1,12 @@
-name: CI
+name: Workflow CI
 
 on:
   pull_request:
     branches:
       - main
-      - master
-
 jobs:
   build-and-test:
+    name : Build and Test
     runs-on: ubuntu-latest
 
     steps:
