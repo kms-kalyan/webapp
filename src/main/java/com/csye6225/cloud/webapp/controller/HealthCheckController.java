@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class HealthCheckController{
 
+    @Autowired
+    SessionConfig sessionConfig;
 
     @Autowired
     UserDAO userDAO;
@@ -61,7 +63,7 @@ public class HealthCheckController{
         ExecutorService executor = Executors.newSingleThreadExecutor();
         @SuppressWarnings("deprecation")
         Future<Boolean> future = executor.submit(() -> {
-            try (Session session = SessionConfig.getSessionFactory().openSession()) {
+            try (Session session = sessionConfig.getSessionFactory().openSession()) {
                 session.createNativeQuery("SELECT 1").getSingleResult();
                 return true;
             } catch (Exception e) {
