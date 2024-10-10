@@ -19,6 +19,12 @@ jobs:
         distribution: 'adopt'
         java-version: '17'
 
+    - name: Build with Maven
+      run: mvn clean install
+      env:
+        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
     - name: Run tests
       run: mvn test
       env:
