@@ -60,6 +60,3 @@ spring-boot-starter/
 .DS_Store
 Thumbs.db
 
-# Application properties
-application*.yml
-application*.properties
