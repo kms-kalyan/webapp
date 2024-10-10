@@ -49,6 +49,7 @@ public class SessionConfig {
 						.applySetting(Environment.DIALECT, dialect)
 						.applySetting(Environment.SHOW_SQL, showSql)
 						.applySetting(Environment.HBM2DDL_AUTO,hbm2ddlAuto)
+						.applySetting(Environment.JAKARTA_HBM2DDL_DB_MAJOR_VERSION, 17)
 						.build();
 				MetadataSources meta = new MetadataSources(serviceRegistry);
 				meta.addAnnotatedClass(User.class);
