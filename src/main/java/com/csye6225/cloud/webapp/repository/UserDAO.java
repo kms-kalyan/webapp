@@ -4,6 +4,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.csye6225.cloud.webapp.configuration.SessionConfig;
@@ -12,12 +13,12 @@ import com.csye6225.cloud.webapp.model.User;
 @Repository
 public class UserDAO extends SessionConfig{
 
-    
-    //Session session = null;
+    @Autowired
+    SessionConfig sessionConfig;
 
     public User findByEmail(String email) {
         
-        Session session = SessionConfig.getSessionFactory().openSession();
+        Session session = sessionConfig.getSessionFactory().openSession();
         Query<User> query = session.createQuery("FROM User WHERE email = :email", User.class);
         query.setParameter("email", email);
         return query.uniqueResult();
@@ -29,7 +30,7 @@ public class UserDAO extends SessionConfig{
         Session session = null;
         Transaction transaction = null;
          try {
-            session = SessionConfig.getSessionFactory().openSession();
+            session = sessionConfig.getSessionFactory().openSession();
             transaction = session.beginTransaction();
 
             session.persist(user);
@@ -49,12 +50,12 @@ public class UserDAO extends SessionConfig{
     }
 
     public User findById(String id) {
-        Session session = UserDAO.getSessionFactory().openSession();
+        Session session = sessionConfig.getSessionFactory().openSession();
         return session.get(User.class, id);
     }
 
     public User merge(User user) {
-        Session session = UserDAO.getSessionFactory().openSession();
+        Session session = sessionConfig.getSessionFactory().openSession();
         return (User) session.merge(user);
     }
     

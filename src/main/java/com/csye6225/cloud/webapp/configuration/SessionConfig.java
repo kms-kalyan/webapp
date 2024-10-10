@@ -18,27 +18,27 @@ public class SessionConfig {
 	private static SessionFactory sessionFactory;
 
 	@Value("${spring.datasource.driver}")
-    private static String driver;
+    private String driver;
 
     @Value("${spring.datasource.url}")
-    private static String url;
+    private String url;
 
     @Value("${spring.datasource.username}")
-    private static String username;
+    private String username;
 
     @Value("${spring.datasource.password}")
-    private static String password;
+    private String password;
 
     @Value("${spring.jpa.properties.hibernate.dialect}")
-    private static String dialect;
+    private String dialect;
 
     @Value("${spring.datasource.show_sql}")
-    private static String showSql;
+    private String showSql;
 
     @Value("${spring.jpa.hibernate.hbm2ddl-auto}")
-    private static String hbm2ddlAuto;
+    private String hbm2ddlAuto;
 	
-	public static SessionFactory getSessionFactory() {
+	public SessionFactory getSessionFactory() {
 		if(sessionFactory  == null) {
 			try {
 				StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
