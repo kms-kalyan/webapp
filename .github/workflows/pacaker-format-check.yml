@@ -1,0 +1,50 @@
+name: Packer Format and Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ami_format_check:
+    name: ami_format_check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Zip Folder
+        run: zip -r webapp.zip .
+
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip
+          unzip -o packer_1.7.4_linux_amd64.zip -d packer_temp
+          sudo mv -f packer_temp/packer /usr/local/bin         
+        shell: bash
+
+      - name: Packer Format
+        run: |
+          cd packer
+          pwd
+          if ! packer fmt image.pkr.hcl; then
+            echo "Packer formatting check failed. Run 'packer fmt' to fix the formatting issues."
+            exit 1
+          else
+            echo "Packer format check passed"
+          fi
+        shell: bash
+
+      - name: Packer Validate
+        run: |
+          cd packer
+          pwd
+          packer init ./
+          if ! packer validate image.pkr.hcl; then
+            echo "Packer validation check failed."
+            exit 1
+          else
+            echo "Packer validation check passed"
+          fi
+        shell: bash
