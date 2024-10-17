@@ -9,6 +9,7 @@ public class WebAppMain {
 
     
     public static void main(String[] args){
+        
         SpringApplication.run(WebAppMain.class, args);
     }
 }
