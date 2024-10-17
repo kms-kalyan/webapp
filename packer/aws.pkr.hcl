@@ -59,7 +59,7 @@ build {
   ]
 
   provisioner "file" {
-    source = "../webapp-main.zip"
+    source = "../webapp.zip"
     destination = "/tmp/webapp.zip"
   }
 
