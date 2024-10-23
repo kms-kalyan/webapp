@@ -14,9 +14,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: csye6225
-          POSTGRES_PASSWORD: Cloud6225
-          POSTGRES_DB: csye6225
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Postgres@55
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: >-
