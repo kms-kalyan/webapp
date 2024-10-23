@@ -1,0 +1,11 @@
+# Create a systemd service file for the Spring Boot application
+echo "[Unit]
+Description=Spring Boot Application
+
+[Service]
+User=csye6225
+EnvironmentFile=/etc/environment
+ExecStart=/usr/bin/java -jar /home/csye6225/webapp/$JAR_FILE
+
+[Install]
+WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
