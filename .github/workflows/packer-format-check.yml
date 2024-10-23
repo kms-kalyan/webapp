@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+
 jobs:
   ami_format_check:
     name: ami_format_check
