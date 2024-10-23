@@ -8,12 +8,6 @@ sudo wget https://downloads.apache.org/tomcat/tomcat-10/v10.1.31/bin/apache-tomc
 sudo tar -xvf /tmp/apache-tomcat-10.1.31.tar.gz -C /opt/tomcat --strip-components=1
 sudo chown -R tomcat:tomcat /opt/tomcat
 
-# Setup PostgreSQL (Ensure PostgreSQL is installed)
-sudo apt-get install -y postgresql postgresql-contrib
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'Postgres@55';"
-# sudo -u postgres psql -c "CREATE DATABASE appdb;"
 
 # Create a system user for the application
 sudo groupadd csye6225
@@ -37,10 +31,6 @@ sudo -u csye6225 mvn clean package
 
 # Locate the generated JAR file (assuming target directory)
 JAR_FILE=$(find target -name "*.jar" | head -n 1)
-
-# Set environment variables for database credentials
-echo "SPRING_DATASOURCE_USERNAME=postgres" | sudo tee -a /etc/environment
-echo "SPRING_DATASOURCE_PASSWORD=Postgres@55" | sudo tee -a /etc/environment
 
 # Reload environment variables
 source /etc/environment
