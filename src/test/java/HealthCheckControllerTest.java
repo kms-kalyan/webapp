@@ -18,6 +18,6 @@ public class HealthCheckControllerTest {
     @Test
     public void whenDatabaseUnavailable_thenHealthCheckReturns503() throws Exception {
         mockMvc.perform(get("/healthz"))
-               .andExpect(status().isOk());
+               .andExpect(status().isServiceUnavailable());
     }
 }
