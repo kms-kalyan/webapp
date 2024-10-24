@@ -42,7 +42,7 @@ jobs:
         shell: bash
 
       - name: Packer Format
-        run: packer fmt -check -recursive
+        run: packer fmt -check
 
       - name: Packer Validate
         run: |
