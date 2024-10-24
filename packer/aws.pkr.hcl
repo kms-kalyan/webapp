@@ -27,17 +27,6 @@ variable "subnet_id" {
   default = "subnet-06c25e1fc37c5c81d"
 }
 
-variable "database_hostname" {
-  type = string
-}
-
-variable "database_username" {
-  type = string
-}
-
-variable "database_password" {
-  type = string
-}
 
 source "amazon-ebs" "ubuntu-ami" {
   region          = var.aws_region
