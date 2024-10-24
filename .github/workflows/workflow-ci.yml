@@ -39,14 +39,14 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
       env:
-        DATABASE_HOSTNAME: localhost:5432
+        DATABASE_HOSTNAME: localhost:5432/
         DATABASE_USERNAME: postgres
         DATABASE_PASSWORD: Postgres@55
 
     - name: Run tests
       run: mvn test
       env:
-        DATABASE_HOSTNAME: localhost:5432
+        DATABASE_HOSTNAME: localhost:5432/
         DATABASE_USERNAME: postgres
         DATABASE_PASSWORD: Postgres@55
 
