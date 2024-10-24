@@ -35,7 +35,7 @@ sudo chown -R csye6225:csye6225 /home/csye6225/webapp
 # Reload environment variables
 source /etc/environment
 
-sudo cp /home/csye6225/webapp/sys-service/webapp.service /etc/systemd/system/webapp.service
+sudo cp /home/csye6225/webapp/packer/webapp.service /etc/systemd/system/webapp.service
 
 # Reload systemd to register the new service
 sudo systemctl daemon-reload
