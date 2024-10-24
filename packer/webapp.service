@@ -5,7 +5,7 @@ Description=Spring Boot Application
 [Service]
 User=csye6225
 EnvironmentFile=/etc/environment
-ExecStart=/usr/bin/java -jar /home/csye6225/webapp/$JAR_FILE
+ExecStart=/usr/bin/java -jar /home/csye6225/webapp/target/webapp-0.0.1-SNAPSHOT.jar
 
 [Install]
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
