@@ -14,7 +14,7 @@ variable "aws_region" {
 
 variable "source_ami" {
   type    = string
-  default =      "ami-0866a3c8686eaeeba"
+  default = "ami-0866a3c8686eaeeba"
 }
 
 variable "ssh_username" {
@@ -25,6 +25,18 @@ variable "ssh_username" {
 variable "subnet_id" {
   type    = string
   default = "subnet-06c25e1fc37c5c81d"
+}
+
+variable "database_hostname" {
+  type = string
+}
+
+variable "database_username" {
+  type = string
+}
+
+variable "database_password" {
+  type = string
 }
 
 source "amazon-ebs" "ubuntu-ami" {
@@ -59,11 +71,11 @@ build {
   ]
 
   provisioner "file" {
-    source = "../webapp.zip"
+    source      = "../webapp.zip"
     destination = "/tmp/webapp.zip"
   }
 
-  provisioner "shell"{
+  provisioner "shell" {
     script = "setup.sh"
   }
 }
