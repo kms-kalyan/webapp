@@ -35,17 +35,7 @@ JAR_FILE=$(find target -name "*.jar" | head -n 1)
 # Reload environment variables
 source /etc/environment
 
-# Create a systemd service file for the Spring Boot application
-echo "[Unit]
-Description=Spring Boot Application
-
-[Service]
-User=csye6225
-EnvironmentFile=/etc/environment
-ExecStart=/usr/bin/java -jar /home/csye6225/webapp/$JAR_FILE
-
-[Install]
-WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
+sudo cp /home/csye6225/webapp/sys-service/webapp.service /etc/systemd/system/webapp.service
 
 # Reload systemd to register the new service
 sudo systemctl daemon-reload
