@@ -8,12 +8,6 @@ sudo wget https://downloads.apache.org/tomcat/tomcat-10/v10.1.31/bin/apache-tomc
 sudo tar -xvf /tmp/apache-tomcat-10.1.31.tar.gz -C /opt/tomcat --strip-components=1
 sudo chown -R tomcat:tomcat /opt/tomcat
 
-# Setup PostgreSQL (Ensure PostgreSQL is installed)
-sudo apt-get install -y postgresql postgresql-contrib
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'Postgres@55';"
-# sudo -u postgres psql -c "CREATE DATABASE appdb;"
 
 # Create a system user for the application
 sudo groupadd csye6225
@@ -33,29 +27,15 @@ sudo chown -R csye6225:csye6225 /home/csye6225/webapp
 
 # Build the application using Maven
 cd /home/csye6225/webapp
-sudo -u csye6225 mvn clean package
+sudo -u csye6225 mvn clean install -DskipTests
 
 # Locate the generated JAR file (assuming target directory)
 JAR_FILE=$(find target -name "*.jar" | head -n 1)
 
-# Set environment variables for database credentials
-echo "SPRING_DATASOURCE_USERNAME=postgres" | sudo tee -a /etc/environment
-echo "SPRING_DATASOURCE_PASSWORD=Postgres@55" | sudo tee -a /etc/environment
-
 # Reload environment variables
 source /etc/environment
 
-# Create a systemd service file for the Spring Boot application
-echo "[Unit]
-Description=Spring Boot Application
-
-[Service]
-User=csye6225
-EnvironmentFile=/etc/environment
-ExecStart=/usr/bin/java -jar /home/csye6225/webapp/$JAR_FILE
-
-[Install]
-WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
+sudo cp /home/csye6225/webapp/packer/webapp.service /etc/systemd/system/webapp.service
 
 # Reload systemd to register the new service
 sudo systemctl daemon-reload

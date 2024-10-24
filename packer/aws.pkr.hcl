@@ -27,6 +27,7 @@ variable "subnet_id" {
   default = "subnet-06c25e1fc37c5c81d"
 }
 
+
 source "amazon-ebs" "ubuntu-ami" {
   region          = var.aws_region
   source_ami      = var.source_ami
@@ -59,11 +60,11 @@ build {
   ]
 
   provisioner "file" {
-    source = "../webapp.zip"
+    source      = "../webapp.zip"
     destination = "/tmp/webapp.zip"
   }
 
-  provisioner "shell"{
+  provisioner "shell" {
     script = "setup.sh"
   }
 }

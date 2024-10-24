@@ -24,15 +24,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in stateless APIs
                 .authorizeRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, "/v1/user", "/healthz").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v2/user", "/healthz").permitAll()
                         .requestMatchers(HttpMethod.GET, "/healthz").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/v1/user/self").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/v2/user/self").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/healthz").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/healthz").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/healthz").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/healthz").permitAll()
-                        .requestMatchers(HttpMethod.PUT,"/v1/user/self").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/v1/user/self").authenticated()
+                        .requestMatchers(HttpMethod.PUT,"/v2/user/self").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v2/user/self").authenticated()
                         .anyRequest().permitAll())
                 .httpBasic(withDefaults());
 

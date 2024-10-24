@@ -107,7 +107,7 @@ public class HealthCheckController{
     }
 
     
-    @PostMapping("/v1/user")
+    @PostMapping("/v2/user")
     public ResponseEntity<Map<String,String>> postMethodName(@RequestBody(required = true) Map<String,String> reqBody) {
         
         if(reqBody.isEmpty() || reqBody == null){
@@ -140,7 +140,7 @@ public class HealthCheckController{
         return responseEntity;
     }
 
-    @PutMapping("/v1/user/self")
+    @PutMapping("/v2/user/self")
     public ResponseEntity<User> updateUserInfo(@RequestBody Map<String,String> reqBody) {
         User updatedUser = new User();
         String email = reqBody.get("email");
@@ -158,7 +158,7 @@ public class HealthCheckController{
         } 
     }
 
-    @GetMapping("/v1/user/self")
+    @GetMapping("/v2/user/self")
     public ResponseEntity<?> checkUser(@RequestHeader("Authorization") String authorizationHeader) {
         
         System.out.println("Inside get, "+authorizationHeader);
