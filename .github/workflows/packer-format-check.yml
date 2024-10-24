@@ -15,9 +15,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Postgres@55
-          POSTGRES_DB: postgres
+          POSTGRES_USER: csye6225
+          POSTGRES_PASSWORD: Cloud6225
+          POSTGRES_DB: csye6225
         ports:
           - 5432:5432
         options: >-
@@ -74,11 +74,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
         env:
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: Postgres@55
+          SPRING_DATASOURCE_USERNAME: csye6225
+          SPRING_DATASOURCE_PASSWORD: Cloud6225
 
       - name: Run tests
         run: mvn test
         env:
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: Postgres@55
+          SPRING_DATASOURCE_USERNAME: csye6225
+          SPRING_DATASOURCE_PASSWORD: Cloud6225
