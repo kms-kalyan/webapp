@@ -42,7 +42,10 @@ jobs:
         shell: bash
 
       - name: Packer Format
-        run: packer fmt -check
+        run: |
+          cd packer
+          packer fmt -check .
+        shell: bash
 
       - name: Packer Validate
         run: |
