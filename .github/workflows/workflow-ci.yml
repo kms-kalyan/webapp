@@ -1,11 +1,9 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-      - feature-A05
-
 jobs:
   integration_test:
     name: Integration test
