@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature-A05
 
 
 jobs:
@@ -43,13 +44,7 @@ jobs:
       - name: Packer Format
         run: |
           cd packer
-          pwd
-          if ! packer fmt aws.pkr.hcl; then
-            echo "Packer formatting check failed. Run 'packer fmt' to fix the formatting issues."
-            exit 1
-          else
-            echo "Packer format check passed"
-          fi
+          packer fmt -check .
         shell: bash
 
       - name: Packer Validate
@@ -74,11 +69,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
         env:
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: Postgres@55
+          DATABASE_HOSTNAME: localhost:5432/
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: Postgres@55
 
       - name: Run tests
         run: mvn test
         env:
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: Postgres@55
+          DATABASE_HOSTNAME: localhost:5432/
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: Postgres@55

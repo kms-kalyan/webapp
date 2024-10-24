@@ -1,10 +1,9 @@
 name: CI
 
 on:
-  pull-request:
+  push:
     branches:
       - main
-
 jobs:
   integration_test:
     name: Integration test
@@ -38,14 +37,16 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
       env:
-        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
-        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DATABASE_HOSTNAME: localhost:5432/
+        DATABASE_USERNAME: postgres
+        DATABASE_PASSWORD: Postgres@55
 
     - name: Run tests
       run: mvn test
       env:
-        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
-        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DATABASE_HOSTNAME: localhost:5432/
+        DATABASE_USERNAME: postgres
+        DATABASE_PASSWORD: Postgres@55
 
   build-image:
     name: Build Custom Amazon Machine Image (AMI) Using Packer
