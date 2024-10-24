@@ -26,11 +26,11 @@ sudo unzip webapp.zip -d webapp
 sudo chown -R csye6225:csye6225 /home/csye6225/webapp
 
 # Build the application using Maven
-#cd /home/csye6225/webapp
-#sudo -u csye6225 mvn clean package
+cd /home/csye6225/webapp
+sudo -u csye6225 mvn clean install -DskipTests
 
 # Locate the generated JAR file (assuming target directory)
-#JAR_FILE=$(find target -name "*.jar" | head -n 1)
+JAR_FILE=$(find target -name "*.jar" | head -n 1)
 
 # Reload environment variables
 source /etc/environment
@@ -44,7 +44,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable webapp.service
 
 # Start the webapp service
-#sudo systemctl start webapp.service
+sudo systemctl start webapp.service
 
 # Check the status of the webapp service
-#sudo systemctl status webapp.service
+sudo systemctl status webapp.service
