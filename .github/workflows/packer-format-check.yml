@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature-A05
 
 jobs:
   ami_format_check:
