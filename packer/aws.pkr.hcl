@@ -68,7 +68,7 @@ build {
     destination = "/tmp/"
   }
   provisioner "file" {
-    source      = "../target/webapp-0.0.1-SNAPSHOT.jar"
+    source      = "/home/csye6225/webapp/target/webapp-0.0.1-SNAPSHOT.jar"
     destination = "/tmp/"
   }
   provisioner "shell" {
