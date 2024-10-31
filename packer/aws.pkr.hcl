@@ -60,11 +60,23 @@ build {
   ]
 
   provisioner "file" {
-    source      = "../webapp.zip"
-    destination = "/tmp/webapp.zip"
+    source      = "./webapp.service"
+    destination = "/tmp/"
   }
-
+  provisioner "file" {
+    source      = "./webapp.path"
+    destination = "/tmp/"
+  }
+  provisioner "file" {
+    source      = "../target/webapp-1.1.0.jar"
+    destination = "/tmp/"
+  }
   provisioner "shell" {
-    script = "setup.sh"
+    scripts = ["./script/create-nologin-user.sh", "./script/install-java.sh",
+    "./script/transfer-ownership.sh", "./script/startup-service.sh"]
+  }
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }
