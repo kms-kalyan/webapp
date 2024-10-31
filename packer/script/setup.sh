@@ -33,13 +33,18 @@ sudo -u csye6225 mvn clean install -DskipTests
 JAR_FILE=$(find target -name "*.jar" | head -n 1)
 
 # Reload environment variables
-source /etc/environment
+source /opt/.env
 
 sudo cp /home/csye6225/webapp/packer/webapp.service /etc/systemd/system/webapp.service
+
+sudo mv /home/csye6225/webapp/packer/webapp.path /etc/systemd/system/webapp.path
+
+echo "SELINUX=permissive" | sudo tee /etc/selinux/config
 
 # Reload systemd to register the new service
 sudo systemctl daemon-reload
 
+sudo systemctl enable webapp.path
 # Enable the webapp service to start at boot
 sudo systemctl enable webapp.service
 
@@ -48,3 +53,14 @@ sudo systemctl start webapp.service
 
 # Check the status of the webapp service
 sudo systemctl status webapp.service
+
+
+#!/bin/bash
+
+# sudo mv /tmp/webapp-0.0.1-SNAPSHOT.jar /opt/
+# sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
+# sudo mv /tmp/webapp.path /etc/systemd/system/webapp.path
+# echo "SELINUX=permissive" | sudo tee /etc/selinux/config
+# sudo systemctl daemon-reload
+# sudo systemctl enable webapp.path
+# sudo systemctl enable webapp.service

@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for the appearance of .env file
+
+[Path]
+PathExists=/opt/.env
+Unit=webapp.service
+
+[Install]
+WantedBy=multi-user.target
