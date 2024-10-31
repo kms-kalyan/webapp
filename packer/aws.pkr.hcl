@@ -60,24 +60,11 @@ build {
   ]
 
   provisioner "file" {
-    source      = "./webapp.service"
-    destination = "/tmp/"
+    source      = "../webapp.zip"
+    destination = "/tmp/webapp.zip"
   }
-  provisioner "file" {
-    source      = "./webapp.path"
-    destination = "/tmp/"
-  }
-  provisioner "file" {
-    source      = "/home/csye6225/webapp/target/webapp-0.0.1-SNAPSHOT.jar"
-    destination = "/tmp/"
-  }
+
   provisioner "shell" {
-    # scripts = ["./script/create-user.sh", "./script/install-java.sh",
-    # "./script/transfer.sh", "./script/setup.sh"]
-    scripts = ["./script/setup.sh"]
-  }
-  post-processor "manifest" {
-    output     = "manifest.json"
-    strip_path = true
+    script = "setup.sh"
   }
 }
