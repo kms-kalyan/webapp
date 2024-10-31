@@ -73,7 +73,7 @@ build {
   }
   provisioner "shell" {
     scripts = ["./script/create-user.sh", "./script/install-java.sh",
-    "./script/transfer.sh", "./script/startup.sh"]
+    "./script/transfer.sh", "./script/setup.sh"]
   }
   post-processor "manifest" {
     output     = "manifest.json"
