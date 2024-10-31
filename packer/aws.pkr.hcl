@@ -68,12 +68,12 @@ build {
     destination = "/tmp/"
   }
   provisioner "file" {
-    source      = "../target/webapp-1.1.0.jar"
+    source      = "../target/webapp-0.0.1-SNAPSHOT.jar"
     destination = "/tmp/"
   }
   provisioner "shell" {
-    scripts = ["./script/create-nologin-user.sh", "./script/install-java.sh",
-    "./script/transfer-ownership.sh", "./script/startup-service.sh"]
+    scripts = ["./script/create-user.sh", "./script/install-java.sh",
+    "./script/transfer.sh", "./script/startup.sh"]
   }
   post-processor "manifest" {
     output     = "manifest.json"
