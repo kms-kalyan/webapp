@@ -89,7 +89,7 @@ public class UserController {
             userService.updateUser(user, authorization);
             logger.info("PUT request is success for user:" + user.getFirstName());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(this.headers).build();
-        } catch (UserNotUpdatedException | UserNotFoundException | UserNotVerifiedException uex) {
+        } catch (UserNotUpdatedException | UserNotFoundException uex) {
             logger.error("Exception occurred for user while creating: " + user.getFirstName());
             throw uex;
         } catch (Exception e) {
