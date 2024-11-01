@@ -14,7 +14,7 @@ variable "aws_region" {
 
 variable "source_ami" {
   type    = string
-  default = "ami-0866a3c8686eaeeba"  # Ubuntu AMI ID
+  default = "ami-0866a3c8686eaeeba"
 }
 
 variable "ssh_username" {
@@ -36,7 +36,7 @@ source "amazon-ebs" "ubuntu-ami" {
   vpc_id          = "vpc-0e87ef6bfc8964ea0"
   subnet_id       = var.subnet_id
   ami_description = "AMI for CSYE6225"
-  
+
   ami_regions = [
     "us-east-1",
   ]
