@@ -1,8 +1,10 @@
 package com.csye6225.cloud.webapp.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,4 +59,19 @@ public class User {
     @Setter
     private LocalDateTime accountUpdated;
 
+    @Getter
+    @Setter
+    @Column(name = "IS_VERIFIED")
+    @Value("${props.boolean.isVerified:#{false}}")
+    private boolean isVerified;
+
+    @Column(name = "TOKEN")
+    @Getter
+    @Setter
+    private String token;
+
+    @Column(name = "EXPIRY_TIME")
+    @Getter
+    @Setter
+    private Date expiryTime;
 }
