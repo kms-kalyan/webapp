@@ -59,36 +59,25 @@ build {
     "source.amazon-ebs.ubuntu-ami"
   ]
 
-  # Upload webapp.zip to the instance
   provisioner "file" {
-    source      = "../webapp.zip"
-    destination = "/tmp/webapp.zip"
+    source      = "./webapp.service"
+    destination = "/tmp/"
   }
-
-  # Run setup script for your application (if needed)
-  provisioner "shell" {
-    script = "./script/setup.sh"
+  provisioner "file" {
+    source      = "./webapp.path"
+    destination = "/tmp/"
   }
-
-  # Install and configure the Amazon CloudWatch Agent
+  provisioner "file" {
+    source      = "../target/webapp-0.0.1-SNAPSHOT.jar"
+    destination = "/tmp/"
+  }
   provisioner "shell" {
-    inline = [
-      # Update packages and install CloudWatch agent (for Ubuntu)
-      "sudo apt-get update -y",
-      "sudo apt-get install -y amazon-cloudwatch-agent",
-
-      # Create CloudWatch agent configuration (adjust as needed)
-      "sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<EOF",
-      "{",
-      "\"agent\": { \"metrics_collection_interval\": 60, \"logfile\": \"/var/log/amazon-cloudwatch-agent.log\" },",
-      "\"metrics\": { \"append_dimensions\": { \"InstanceId\": \"$(curl http://169.254.169.254/latest/meta-data/instance-id)\" }, \"metrics_collected\": { \"cpu\": { \"measurement\": [\"cpu_usage_idle\"] } } },",
-      "\"logs\": { \"logs_collected\": { \"files\": [{\"file_path\": \"/var/log/syslog\", \"log_group_name\": \"/var/log/syslog\"}] } }",
-      "} EOF",
-
-      # Enable and start the CloudWatch agent service on boot
-      "sudo systemctl enable amazon-cloudwatch-agent.service",
-      "sudo systemctl start amazon-cloudwatch-agent.service"
-    ]
+    scripts = ["./script/create-user.sh", "./script/install-java.sh",
+    "./script/transfer.sh", "./script/cloudWatch.sh", "./script/start_setup.sh"]
+  }
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }
 
