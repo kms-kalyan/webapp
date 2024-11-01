@@ -52,7 +52,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Build with Maven
+      - name: Build with Maven -DskipTests
         run: mvn clean install
         env:
           DATABASE_HOSTNAME: localhost:5432/
