@@ -1,8 +1,8 @@
 [Unit]
-Description=Watch for the appearance of .env file
+Description=Watch for the appearance of environment file
 
 [Path]
-PathExists=/opt/.env
+PathExists=/etc/environment
 Unit=webapp.service
 
 [Install]

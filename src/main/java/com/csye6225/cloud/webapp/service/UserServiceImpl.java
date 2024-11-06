@@ -1,5 +1,6 @@
 package com.csye6225.cloud.webapp.service;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.csye6225.cloud.webapp.dto.Updaterequest;
 import com.csye6225.cloud.webapp.dto.UserRequest;
 import com.csye6225.cloud.webapp.dto.UserResponse;
 import com.csye6225.cloud.webapp.exception.UserNotCreatedException;
@@ -36,14 +38,16 @@ public class UserServiceImpl implements UserService {
 
     //private final ModelMapper modelMapper;
 
+    private final ModelMapper modelMapper;
+
     private final Environment environment;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, Environment environment) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, Environment environment) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
         this.environment = environment;
     }
-
     @Override
     public UserResponse createdUser(UserRequest user) throws UserNotCreatedException{
         Optional<User> requestedUser = userRepository.findByEmail(user.getEmail());
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
             if (null != user.getPassword() && !user.getPassword().isBlank()) {
                 user.setPassword(bcryptEncoder(user.getPassword()));
             }
-            User creatingUser = new User();
+            User creatingUser = this.modelMapper.map(user, User.class);
             creatingUser.setToken(UUID.randomUUID().toString());
             creatingUser.setEmail(user.getEmail());
             creatingUser.setFirstName(user.getFirstName());
@@ -64,14 +68,8 @@ public class UserServiceImpl implements UserService {
             creatingUser.setPassword(user.getPassword());
             User createdUser = userRepository.save(creatingUser);
             //publishMessage(createdUser.getEmail()+":"+creatingUser.getToken());
-            UserResponse ur = new UserResponse();
-            ur.setEmail(createdUser.getEmail());
-            ur.setFirstName(createdUser.getFirstName());
-            ur.setLastName(createdUser.getLastName());
-            ur.setAccountCreated(createdUser.getAccountCreated());
-            ur.setAccountUpdated(createdUser.getAccountUpdated());
-            ur.setId(createdUser.getId());
-            return ur;
+            
+            return this.modelMapper.map(createdUser, UserResponse.class);
         } catch (Exception e) {
             logger.error("User cannot be created for user, "+user.getEmail());
             throw new UserNotCreatedException("User cannot be created");
@@ -94,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserRequest user, String authorization) throws UserNotUpdatedException, UserNotFoundException, UserNotVerifiedException {
+    public void updateUser(UserRequest user, String authorization) throws UserNotUpdatedException, UserNotFoundException {
         User userDb = getUserFromDb(authorization);
         if (null == user.getFirstName() && null == user.getLastName() && null == user.getPassword()) {
             logger.error("All fields are null or empty");
@@ -124,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public User getUserFromDb(String authorization) throws UserNotFoundException, UserNotVerifiedException {
+    public User getUserFromDb(String authorization) throws UserNotFoundException {
         String[] usernamePassword = base64Decoder(authorization);
         if (null == usernamePassword || usernamePassword.length < 2) {
             logger.error("Username or password wrong");
@@ -135,13 +133,8 @@ public class UserServiceImpl implements UserService {
             logger.error("User not found for user: "+usernamePassword[0]);
             throw new UserNotFoundException("User Not Found");
         }
-        else if (passwordCheck(usernamePassword[1], requestedUser.get().getPassword())) {
-            if(requestedUser.get().isVerified()) {
-                return requestedUser.get();
-            } else {
-                logger.error("User not verified");
-                throw new UserNotVerifiedException("User not verified");
-            }
+        if (passwordCheck(usernamePassword[1], requestedUser.get().getPassword())) {
+            return requestedUser.get();
         } else {
             logger.error("Invalid Password");
             logger.error("Password is invalid for user: "+usernamePassword[0]);

@@ -9,7 +9,10 @@ sudo dpkg -i amazon-cloudwatch-agent.deb
 
 # Create the log file if it doesn't exist
 sudo touch /var/log/webapp.log
-sudo chown -R ec2-user:ec2-user /var/log/webapp.log
+sudo chown -R csye6225:csye6225 /var/log/webapp.log
+sudo chmod 664 /var/log/webapp.log
+
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
 # Define the JSON content for CloudWatch agent configuration
 cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
@@ -19,7 +22,7 @@ cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agen
       "files": {
         "collect_list": [
           {
-            "file_path": "/var/log/tomcat9/csye6225.log",
+            "file_path": "/tmp/webapp.log",
             "log_group_name": "csye6225",
             "log_stream_name": "webapp",
             "timezone": "UTC"
@@ -30,7 +33,7 @@ cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agen
   },
   "metrics": {
     "append_dimensions": {
-      "InstanceId": "\${aws:InstanceId}"
+      "InstanceId": "$INSTANCE_ID"
     },
     "metrics_collected": {
       "cpu": {
