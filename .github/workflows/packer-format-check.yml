@@ -45,13 +45,14 @@ jobs:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
-
+          S3_bucket: sample_value
       - name: Run tests
         run: mvn test
         env:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
+          S3_bucket: sample_value
       - name: Install Packer
         run: |
           wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip

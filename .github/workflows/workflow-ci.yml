@@ -76,12 +76,14 @@ jobs:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
+          S3_bucket: sample_value
       - name: Run tests
         run: mvn test
         env:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
+          S3_bucket: sample_value
 
       - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
