@@ -4,23 +4,24 @@ on:
   push:
     branches:
       - main
-      - feature-A05
+
 jobs:
   integration_test:
     name: Integration test
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres:latest
+      mysql:
+        image: mysql:latest
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Postgres@55
-          POSTGRES_DB: postgres
+          MYSQL_ROOT_PASSWORD: Mysql@55
+          MYSQL_DATABASE: mysqldb
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: Mysql@55
         ports:
-          - 5432:5432
+          - 3306:3306
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -41,16 +42,17 @@ jobs:
     needs: integration_test
 
     services:
-      postgres:
-        image: postgres:latest
+      mysql:
+        image: mysql:latest
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Postgres@55
-          POSTGRES_DB: postgres
+          MYSQL_ROOT_PASSWORD: Mysql@55
+          MYSQL_DATABASE: mysqldb
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: Mysql@55
         ports:
-          - 5432:5432
+          - 3306:3306
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "mysqladmin ping --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -71,15 +73,15 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
         env:
-          DATABASE_HOSTNAME: localhost:5432/
-          DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: Postgres@55
+          DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
+          DATABASE_USERNAME: root
+          DATABASE_PASSWORD: Mysql@55
       - name: Run tests
         run: mvn test
         env:
-          DATABASE_HOSTNAME: localhost:5432/
-          DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: Postgres@55
+          DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
+          DATABASE_USERNAME: root
+          DATABASE_PASSWORD: Mysql@55
 
       - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2

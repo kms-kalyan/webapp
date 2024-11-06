@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - feature-A05
 
 
 jobs:
@@ -43,15 +42,15 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
         env:
-          DATABASE_HOSTNAME: localhost:3306/mysqldb
-          DATABASE_USERNAME: mysql
+          DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
+          DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
 
       - name: Run tests
         run: mvn test
         env:
-          DATABASE_HOSTNAME: localhost:3306/mysqldb
-          DATABASE_USERNAME: mysql
+          DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
+          DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
       - name: Install Packer
         run: |
