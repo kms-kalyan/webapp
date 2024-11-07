@@ -22,7 +22,7 @@ cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agen
       "files": {
         "collect_list": [
           {
-            "file_path": "/tmp/webapp.log",
+            "file_path": "/var/log/webapp.log",
             "log_group_name": "csye6225",
             "log_stream_name": "webapp",
             "timezone": "UTC"

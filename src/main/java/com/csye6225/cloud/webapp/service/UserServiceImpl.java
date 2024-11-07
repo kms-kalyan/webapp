@@ -1,6 +1,7 @@
 package com.csye6225.cloud.webapp.service;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.asm.Advice.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.google.pubsub.v1.TopicName;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
@@ -66,6 +68,8 @@ public class UserServiceImpl implements UserService {
             creatingUser.setFirstName(user.getFirstName());
             creatingUser.setLastName(user.getLastName());
             creatingUser.setPassword(user.getPassword());
+            creatingUser.setAccountCreated(LocalDateTime.now());
+            creatingUser.setAccountUpdated(LocalDateTime.now());
             User createdUser = userRepository.save(creatingUser);
             //publishMessage(createdUser.getEmail()+":"+creatingUser.getToken());
             
@@ -114,6 +118,7 @@ public class UserServiceImpl implements UserService {
                 logger.warn("New Lastname is given");
                 userDb.setLastName(user.getLastName());
             }
+            userDb.setAccountUpdated(LocalDateTime.now());
             userRepository.save(userDb);
         } catch (Exception e) {
             logger.error("User not updated for user: "+userDb.getEmail());

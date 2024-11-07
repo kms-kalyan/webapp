@@ -2,7 +2,7 @@
 Description=Watch for the appearance of environment file
 
 [Path]
-PathExists=/etc/environment
+PathExists=/opt/webapp/app/.env
 Unit=webapp.service
 
 [Install]

@@ -60,3 +60,4 @@ spring-boot-starter/
 .DS_Store
 Thumbs.db
 
+packer/manifest.json
