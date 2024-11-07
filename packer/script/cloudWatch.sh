@@ -8,9 +8,9 @@ wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-
 sudo dpkg -i amazon-cloudwatch-agent.deb
 
 # Create the log file if it doesn't exist
-sudo touch /var/log/webapp.log
-sudo chown -R csye6225:csye6225 /var/log/webapp.log
-sudo chmod 664 /var/log/webapp.log
+sudo touch /tmp/webapp.log
+sudo chown -R csye6225:csye6225 /tmp/webapp.log
+sudo chmod 664 /tmp/webapp.log
 
 INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
@@ -22,7 +22,7 @@ cat <<EOF | sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agen
       "files": {
         "collect_list": [
           {
-            "file_path": "/var/log/webapp.log",
+            "file_path": "/tmp/webapp.log",
             "log_group_name": "csye6225",
             "log_stream_name": "webapp",
             "timezone": "UTC"
