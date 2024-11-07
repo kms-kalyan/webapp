@@ -1,10 +1,5 @@
 #!/bin/bash
 
-
-# #Installing java
-# sudo dnf install java-17-openjdk-devel.x86_64 -y
-# echo "Java installation completed."
-
 # Update system and install required packages
 sudo apt-get update
 sudo apt-get install -y openjdk-17-jdk maven unzip

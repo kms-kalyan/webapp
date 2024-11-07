@@ -4,14 +4,13 @@ on:
   pull_request:
     branches:
       - main
-      - feature-A05
 
 
 jobs:
   ami_format_check:
     name: ami_format_check
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:latest
@@ -42,23 +41,23 @@ jobs:
       - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: AKIAYZZGS7FOQZP6PWEJ
+          aws-secret-access-key: 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
+          aws-region: us-east-1
       - name: Build with Maven
         run: mvn clean install -DskipTests
         env:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
-          S3_bucket: sample_value
+          S3_BUCKET_NAME: sample_value
       - name: Run tests
         run: mvn test
         env:
           DATABASE_HOSTNAME: jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=true
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
-          S3_bucket: sample_value
+          S3_BUCKET_NAME: sample_value
       - name: Install Packer
         run: |
           wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip
