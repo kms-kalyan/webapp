@@ -113,18 +113,6 @@ jobs:
       - name: Sharing the AMI with Demo Account
         run: |
           aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission '{"Add":[{"UserId": "${{ secrets.DEMO_ACCOUNT_ID}}" }]}'
-      
-        
-      # - name: AWS CLI
-      #   id: install-aws-cli
-      #   uses: unfor19/install-aws-cli-action@v1.0.4
-      #   with:
-      #     version: 2
-      #     run: |
-      #       aws ec2 create-launch-template-version --launch-template-name csye6225_launch_template --source-version 1 --launch-template-data "{\"ImageId\":\"${{ steps.packer.outputs.ami_id }}\"}"
-      #       aws autoscaling update-auto-scaling-group --auto-scaling-group-name WebAppAutoScaleGroup --launch-template LaunchTemplateName=csye6225_launch_template,Version='$Latest'
-      #       aws autoscaling start-instance-refresh --auto-scaling-group-name WebAppAutoScaleGroup
-
     
       - name: Get Environment Specification
         id: fetch-environment-vars
