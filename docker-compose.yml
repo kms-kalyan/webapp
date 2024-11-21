@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    image: mysql:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=Mysql@55
+      - DB_NAME=app_database
+      - DATABASE_HOSTNAME=jdbc:mysql://localhost:3306/mysqldb?createDatabaseIfNotExist=True
+      - DIALECT=mysql
+      - PORT=3306
+      - NODE_ENV=development
+    networks:
+      - clouddemo
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Mysql@55
+      MYSQL_DATABASE: mysqldb
+    networks:
+      - clouddemo
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 40s
+
+networks:
+  clouddemo:

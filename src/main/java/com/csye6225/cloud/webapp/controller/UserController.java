@@ -6,6 +6,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import com.csye6225.cloud.webapp.dto.UserRequest;
@@ -17,6 +18,7 @@ import com.csye6225.cloud.webapp.exception.UserNotVerifiedException;
 import com.csye6225.cloud.webapp.service.UserService;
 import com.csye6225.cloud.webapp.service.MetricsService;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -80,12 +82,12 @@ public class UserController {
     }
 
     @PutMapping(path = "/self", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Void> updateUser(@RequestParam Map<String, String> queryParameter, 
+    public ResponseEntity<Object> updateUser(@RequestParam Map<String, String> queryParameter, 
                                            @RequestBody UserRequest user, 
                                            @RequestHeader("authorization") String authorization) throws UserNotUpdatedException, UserNotFoundException, UserNotVerifiedException {
         long startTime = System.currentTimeMillis();
 
-        logger.debug("The request given by the user: " + user);
+        logger.info("The request given by the user: " + user);
         if (null != queryParameter && !queryParameter.isEmpty()) {
             logger.error("Query parameter is given");
 
@@ -96,9 +98,9 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(this.headers).build();
         }
-        
+        String message = "";
         try {
-            userService.updateUser(user, authorization);
+            message = userService.updateUser(user, authorization);
             logger.info("PUT request is success for user:" + user.getFirstName());
 
             long duration = System.currentTimeMillis() - startTime;
@@ -107,7 +109,7 @@ public class UserController {
             metricsService.recordApiDuration("/v1/user/self", duration);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(this.headers).build();
-        } catch (UserNotUpdatedException | UserNotFoundException uex) {
+        } catch (UserNotUpdatedException | UserNotFoundException | UsernameNotFoundException uex) {
             logger.error("Exception occurred for user while updating: " + user.getFirstName());
 
             long duration = System.currentTimeMillis() - startTime;
@@ -115,7 +117,7 @@ public class UserController {
             metricsService.recordApiCall("/v1/user/self");
             metricsService.recordApiDuration("/v1/user/self", duration);
 
-            throw uex;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(this.headers).body(message);
         } catch (Exception e) {
             logger.error("Exception occurred for user while updating: " + user.getFirstName());
 
@@ -124,10 +126,28 @@ public class UserController {
             metricsService.recordApiCall("/v1/user/self"); 
             metricsService.recordApiDuration("/v1/user/self", duration);
 
-            throw new UserNotUpdatedException("User not updated");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(this.headers).body(Collections.singletonMap("Message", e.getMessage()));
         }
     }
 
+    @GetMapping("/verify")
+    public ResponseEntity<Object> verifyUser(@RequestParam Map<String, String> queryParameter, @RequestBody(required = false) String payload, @RequestHeader(value = "isIntegrationTest", required = false) String isIntegrationTest) throws UserNotVerifiedException {
+        logger.debug("The request given by the user: " + queryParameter);
+        if (null != payload && !payload.isEmpty()) {
+            logger.error("Payload is given");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(this.headers).build();
+        }
+        String message = "";
+        try{
+            message = userService.verifyUser(queryParameter, isIntegrationTest);
+        }catch(UserNotVerifiedException ue){
+            logger.error(message);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(this.headers).body(Collections.singletonMap("verificationStatus", ue.getMessage()));
+        }
+        logger.info("VerificationStatus for user:" + message + ", using" + queryParameter);
+        return ResponseEntity.status(HttpStatus.OK).headers(this.headers).body(Collections.singletonMap("verificationStatus", message));
+    }
+    
     @RequestMapping(method = {RequestMethod.HEAD, RequestMethod.OPTIONS}, path = {"", "/self"})
     public ResponseEntity<Void> handleHeadOptionsCall() {
         HttpHeaders headers = new HttpHeaders();

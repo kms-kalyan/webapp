@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.csye6225.cloud.webapp.exception.UserNotFoundException;
+import com.csye6225.cloud.webapp.exception.UserNotVerifiedException;
 import com.csye6225.cloud.webapp.model.User;
 import com.csye6225.cloud.webapp.model.UserImage;
 import com.csye6225.cloud.webapp.repository.ProfileRepo;
@@ -102,7 +103,7 @@ public class ProfilePictureController {
     }
 
     @GetMapping("/pic")
-    public ResponseEntity<Object> getProfilePic(@RequestHeader("authorization") String authorization) {
+    public ResponseEntity<Object> getProfilePic(@RequestHeader("authorization") String authorization) throws UserNotVerifiedException {
         long startTime = System.currentTimeMillis();     
 
         String email;
@@ -143,7 +144,7 @@ public class ProfilePictureController {
     }
     
     @DeleteMapping("/pic")
-    public ResponseEntity<Object> deleteProfilePic(@RequestHeader("authorization") String authorization) {
+    public ResponseEntity<Object> deleteProfilePic(@RequestHeader("authorization") String authorization) throws UserNotVerifiedException {
         long startTime = System.currentTimeMillis();     
 
         String email;
@@ -192,7 +193,7 @@ public class ProfilePictureController {
         }
     }
 
-    private String extractEmailFromAuthorizationHeader(String authorizationHeader) throws UserNotFoundException{
+    private String extractEmailFromAuthorizationHeader(String authorizationHeader) throws UserNotFoundException,UserNotVerifiedException{
         
         User user = userServiceImpl.getUserFromDb(authorizationHeader);
         return user.getEmail(); 
