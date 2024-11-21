@@ -147,7 +147,7 @@ jobs:
         run: |
           echo "currently running in Dev Environment"
           # Add Dev-specific commands here
-          # aws ec2 modify-image-attribute --image-id ${{ env.AMI_ID }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEV_ACCOUNT_ID }}\"]}"
+          # aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEV_ACCOUNT_ID }}\"]}"
 
 
           echo "Updating Launch Template"
@@ -156,7 +156,7 @@ jobs:
             --launch-template-name csye6225_launch_template \
             --source-version "\$Latest" \
             --version-description "Updated with latest AMI ID" \
-            --launch-template-data "{\"ImageId\": \"${{ env.AMI_ID }}\"}"
+            --launch-template-data "{\"ImageId\": \"${{ steps.packer.outputs.ami_id }}\"}"
           echo "Updated launch template successfully!"
 
           echo "Modifying Launch Template"
@@ -208,7 +208,7 @@ jobs:
         run: |
           echo "currently running in Demo"
           # Add Demo-specific commands here
-          # aws ec2 modify-image-attribute --image-id ${{ env.AMI_ID }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEMO_ACCOUNT_ID }}\"]}"
+          # aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEMO_ACCOUNT_ID }}\"]}"
 
           echo "Updating Launch Template"
 
@@ -217,7 +217,7 @@ jobs:
             --launch-template-name csye6225_launch_template \
             --source-version "\$Latest" \
             --version-description "Updated with latest AMI ID" \
-            --launch-template-data "{\"ImageId\": \"${{ env.AMI_ID }}\"}"
+            --launch-template-data "{\"ImageId\": \"${{ steps.packer.outputs.ami_id }}\"}"
           echo "Updated launch template successfully..."
 
           echo "Modifying Launch Template"
