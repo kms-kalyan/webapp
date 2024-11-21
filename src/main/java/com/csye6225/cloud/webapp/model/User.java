@@ -73,5 +73,5 @@ public class User {
     @Column(name = "EXPIRY_TIME")
     @Getter
     @Setter
-    private Date expiryTime;
+    private LocalDateTime expiryTime;
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 public interface UserService {
     UserResponse createdUser(UserRequest user) throws UserNotCreatedException;
     UserResponse getUser(String authorization) throws UserNotFoundException, UserNotVerifiedException;
-    void updateUser(UserRequest user, String authorization) throws UserNotUpdatedException, UserNotFoundException;
+    String updateUser(UserRequest user, String authorization) throws UserNotUpdatedException, UserNotFoundException, UserNotVerifiedException;
     String[] base64Decoder(String token);
     String bcryptEncoder(String password);
     boolean passwordCheck(String rawPassword, String hashedPassword);

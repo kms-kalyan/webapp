@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature-A05
 
 jobs:
   integration_test:
@@ -85,6 +86,7 @@ jobs:
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
           S3_BUCKET_NAME: sample_value
+          SNS_TOPIC_ARN: sns_topic
       - name: Run tests
         run: mvn test
         env:
@@ -92,6 +94,7 @@ jobs:
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
           S3_BUCKET_NAME: sample_value
+          SNS_TOPIC_ARN: sns_topic
       - name: Packer setup
         uses: hashicorp/setup-packer@main
         with:
@@ -105,7 +108,149 @@ jobs:
           packer build -machine-readable aws.pkr.hcl | tee packer.log
           AMI_ID=$(awk -F, '/artifact,0,id/ {print $6}' packer.log | cut -d: -f2)
           echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_OUTPUT
 
       - name: Sharing the AMI with Demo Account
         run: |
           aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission '{"Add":[{"UserId": "${{ secrets.DEMO_ACCOUNT_ID}}" }]}'
+    
+      - name: Get Environment Specification
+        id: fetch-environment-vars
+        run: |
+          echo "IS_DEV_ENVIRONMENT=${{ vars.isDevEnvironment }}" >> $GITHUB_ENV
+          echo "IS_DEMO_ENVIRONMENT=${{ vars.isDemoEnvironment }}" >> $GITHUB_ENV
+
+      - name: Set the specific Environment
+        id: determine-environment
+        run: |
+          if [ "${{ env.IS_DEV_ENVIRONMENT }}" == "true" ] && [ "${{ env.IS_DEMO_ENVIRONMENT }}" == "true" ]; then
+            echo "ENVIRONMENTS=dev,demo" >> $GITHUB_ENV
+          elif [ "${{ env.IS_DEV_ENVIRONMENT }}" == "true" ]; then
+            echo "ENVIRONMENTS=dev" >> $GITHUB_ENV
+          elif [ "${{ env.IS_DEMO_ENVIRONMENT }}" == "true" ]; then
+            echo "ENVIRONMENTS=demo" >> $GITHUB_ENV
+          else
+            echo "Error: No environment provided" >&2
+            exit 1
+          fi
+
+      - name: Configure DEV AWS credentials
+        if: contains(env.ENVIRONMENTS, 'dev')
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Process dev environment
+        if: ${{ env.ENVIRONMENTS == 'dev' || env.ENVIRONMENTS == 'dev,demo' }}
+        run: |
+          echo "currently running in Dev Environment"
+          # Add Dev-specific commands here
+          # aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEV_ACCOUNT_ID }}\"]}"
+
+
+          echo "Updating Launch Template"
+          #Update Launch Template
+          aws ec2 create-launch-template-version \
+            --launch-template-name csye6225_launch_template \
+            --source-version "\$Latest" \
+            --version-description "Updated with latest AMI ID" \
+            --launch-template-data "{\"ImageId\": \"${{ steps.packer.outputs.ami_id }}\"}"
+          echo "Updated launch template successfully!"
+
+          echo "Modifying Launch Template"
+          aws ec2 modify-launch-template \
+            --launch-template-name csye6225_launch_template \
+            --default-version "\$Latest"
+          echo "Launch template modified successfully!"
+
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name --auto-scaling-group-name WebAppAutoScaleGroup \
+            --preferences '{"MinHealthyPercentage": 50}' \
+            --query 'InstanceRefreshId' \
+            --output text)
+
+          echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV
+
+
+          echo "Instance Refresh Started..."
+          sleep 45
+
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name WebAppAutoScaleGroup \
+              --query "InstanceRefreshes[0].Status" \
+              --output text)
+            echo "Current Status: $STATUS"
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance Refresh Completed Successfully!"
+              break
+            elif [ "$STATUS" == "Failed" ]; then
+              echo "Instance Refresh Failed."
+              exit 1
+            else
+              echo "Instance Refresh In Progress... Checking again in 45 seconds."
+              sleep 45
+            fi
+          done
+
+      - name: Configure DEMO AWS credentials
+        if: ${{ env.ENVIRONMENTS == 'demo' || env.ENVIRONMENTS == 'dev,demo' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Process demo environment
+        if: contains(env.ENVIRONMENTS, 'demo')
+        run: |
+          echo "currently running in Demo"
+          # Add Demo-specific commands here
+          # aws ec2 modify-image-attribute --image-id ${{ steps.packer.outputs.ami_id }} --launch-permission "{\"Add\":[{\"UserId\":\"${{ secrets.DEMO_ACCOUNT_ID }}\"]}"
+
+          echo "Updating Launch Template"
+
+          # Update Launch Template
+          aws ec2 create-launch-template-version \
+            --launch-template-name csye6225_launch_template \
+            --source-version "\$Latest" \
+            --version-description "Updated with latest AMI ID" \
+            --launch-template-data "{\"ImageId\": \"${{ steps.packer.outputs.ami_id }}\"}"
+          echo "Updated launch template successfully..."
+
+          echo "Modifying Launch Template"
+          aws ec2 modify-launch-template \
+            --launch-template-name csye6225_launch_template \
+            --default-version "\$Latest"
+          echo "Launch template modified successfully!"
+
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name WebAppAutoScaleGroup \
+            --preferences '{"MinHealthyPercentage": 50}' \
+            --query 'InstanceRefreshId' \
+            --output text)
+
+          echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV
+
+          echo "Instance Refresh Started"
+          sleep 45
+
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name WebAppAutoScaleGroup \
+              --query "InstanceRefreshes[0].Status" \
+              --output text)
+            echo "Current Status: $STATUS"
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance Refresh Completed Successfully!"
+              break
+            elif [ "$STATUS" == "Failed" ]; then
+              echo "Instance Refresh Failed!"
+              exit 1
+            else
+              echo "Instance Refresh In Progress... Checking again in 45 seconds."
+              sleep 45
+            fi
+          done

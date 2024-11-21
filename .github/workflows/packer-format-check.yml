@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature-A05
 
 
 jobs:
@@ -51,6 +52,7 @@ jobs:
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
           S3_BUCKET_NAME: sample_value
+          SNS_TOPIC_ARN: sns_topic
       - name: Run tests
         run: mvn test
         env:
@@ -58,6 +60,7 @@ jobs:
           DATABASE_USERNAME: root
           DATABASE_PASSWORD: Mysql@55
           S3_BUCKET_NAME: sample_value
+          SNS_TOPIC_ARN: sns_topic
       - name: Install Packer
         run: |
           wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip
