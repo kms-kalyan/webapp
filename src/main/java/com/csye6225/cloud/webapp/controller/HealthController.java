@@ -22,7 +22,7 @@ public class HealthController {
         this.metricsService = metricsService;  // Initialize MetricsService
     }
 
-    @GetMapping("/healthz")
+    @GetMapping("/cicd")
     public ResponseEntity<Void> getHealthCheck(@RequestParam Map<String, String> queryParameter, 
                                                @RequestBody(required = false) String payload, 
                                                @RequestHeader(value = "authorization", required = false) String authorization) {
