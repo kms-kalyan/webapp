@@ -22,8 +22,42 @@ public class HealthController {
         this.metricsService = metricsService;  // Initialize MetricsService
     }
 
-    @GetMapping("/cicd")
+    @GetMapping("/healthz")
     public ResponseEntity<Void> getHealthCheck(@RequestParam Map<String, String> queryParameter, 
+                                               @RequestBody(required = false) String payload, 
+                                               @RequestHeader(value = "authorization", required = false) String authorization) {
+        long startTime = System.currentTimeMillis();  // Start time for measuring API duration
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl(CacheControl.noCache().mustRevalidate());
+        headers.setPragma("no-cache");
+        headers.add("X-Content-Type-Options", "nosniff");
+
+        ResponseEntity<Void> response;
+
+        if (null != authorization) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).build();
+        } else if (null != payload && !payload.isEmpty()) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).build();
+        } else if (null != queryParameter && !queryParameter.isEmpty()) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).build();
+        } else if (healthCheckService.isDatabaseConnected()) {
+            response = ResponseEntity.status(HttpStatus.OK).headers(headers).build();
+        } else {
+            response = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).headers(headers).build();
+        }
+
+        long duration = System.currentTimeMillis() - startTime;  // Calculate API duration
+
+        // Record custom metrics
+        metricsService.recordApiCall("/healthz");  // Record API call count
+        metricsService.recordApiDuration("/healthz", duration);  // Record API duration
+
+        return response;
+    }
+
+    @GetMapping("/cicd")
+    public ResponseEntity<Void> getCicdCheck(@RequestParam Map<String, String> queryParameter, 
                                                @RequestBody(required = false) String payload, 
                                                @RequestHeader(value = "authorization", required = false) String authorization) {
         long startTime = System.currentTimeMillis();  // Start time for measuring API duration
