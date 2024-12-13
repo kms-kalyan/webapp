@@ -42,8 +42,8 @@ jobs:
       - name: Set up AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: AKIAYZZGS7FOQZP6PWEJ
-          aws-secret-access-key: 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
+          aws-access-key-id: aws_access_key
+          aws-secret-access-key: aws_access_key
           aws-region: us-east-1
       - name: Build with Maven
         run: mvn clean install -DskipTests
